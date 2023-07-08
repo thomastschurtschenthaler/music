@@ -1,0 +1,16 @@
+{
+    "name": "Music",
+    "short_name": "Music",
+    "description": "Music Payer.",
+    "icons": [
+      {
+        "src": "music-144x144.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "/music/music.html",
+    "display": "fullscreen",
+    "theme_color": "#eeeeee",
+    "background_color": "#eeeeee"
+  }
