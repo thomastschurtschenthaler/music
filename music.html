@@ -1,0 +1,35 @@
+<html>
+    <head>
+        <title>Music</title>
+        <meta name="appPath" content="%appPath%"><meta>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Stream Music!</title>
+
+        <link rel="manifest" href="manifest.json" />
+        <link rel="apple-touch-icon" href="music-144x144.png">
+        <style>
+            body, html {
+                overflow: hidden;
+            }
+            .row {
+                margin: 0!important;
+            }
+            .main {
+                display: flex;
+                flex-direction: column;
+                height:100%;
+            }
+            music-main {
+                display: flex;
+                flex-direction: column;
+                height:100%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main" class="main"></div>
+        <div id="injected"></div>
+        <script src="load/loader.js"></script>
+    </body>
+</html>
