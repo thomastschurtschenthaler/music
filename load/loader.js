@@ -35,7 +35,7 @@ if (!window._isPWA) {
                 let respbuffer = Uint8Array.from(atob(fromCache), c => c.charCodeAt(0));
                 return respbuffer;
             }
-            let url =  GIT_URL+respath;
+            let url =  GIT_URL+respath+"?token="+((new Date()).getTime()+"");
             let resp = null;
             if (window._isPWA) {
                 let gheaders={
@@ -63,7 +63,6 @@ if (!window._isPWA) {
             return respbuffer;
         } catch (e) {
             console.log("loadAndCacheResource error", e+"; "+respath);
-            window.localStorage.removeItem("GIT_TOKEN");
             window.localStorage.setItem("showgittokeninput", "true");
             window.location.reload();
         }
@@ -81,13 +80,6 @@ if (!window._isPWA) {
     }
 
     window._loadApp = async function(reload) {
-        if (reload) {
-            window._appLoaded = null;
-        } else {
-            window._appLoaded = function() {
-                window.app.init();
-            }
-        }
         let noCache = reload;
         window.loadedStyles = {
             "bootstrap": await loadAndCacheResource("/lib/bootstrap.min.css", noCache),
@@ -95,14 +87,17 @@ if (!window._isPWA) {
             "materialcss": await loadAndCacheResource("/music/comp/font/material.css2", noCache),
             "materialfont": await loadAndCacheResource("/music/comp/font/material.woff2", noCache)
         }
-        loadScript("comp/common.js", reload);
-        loadScript("comp/player.js", reload);
-        loadScript("comp/search.js", reload);
-        loadScript("comp/playlist.js", reload);
-        loadScript("comp/playlists.js", reload);
-        loadScript("comp/main.js", reload);
-        loadScript("app.js", reload);
+        await loadScript("comp/common.js", reload);
+        await loadScript("comp/player.js", reload);
+        await loadScript("comp/search.js", reload);
+        await loadScript("comp/playlist.js", reload);
+        await loadScript("comp/playlists.js", reload);
+        await loadScript("comp/main.js", reload);
+        await loadScript("app.js", reload);
         window.localStorage.setItem("cached", "true");
+        if (!reload) {
+            window.app.init();
+        }
     };
     window.reloadApp = async function() {
         await window._loadApp(true);
@@ -110,13 +105,13 @@ if (!window._isPWA) {
     }
 
     window._GIT_TOKEN = window.localStorage.getItem("GIT_TOKEN");
-    if (window._isPWA && window._GIT_TOKEN==null && (window.localStorage.getItem("cached")==null || window.localStorage.getItem("showgittokeninput")!=null)) {
+    if (window._isPWA && ((window._GIT_TOKEN==null && window.localStorage.getItem("cached")==null) || window.localStorage.getItem("showgittokeninput")!=null)) {
         window.localStorage.removeItem("showgittokeninput");
         document.getElementById("main").innerHTML="GIT Token: <input id='gittoken' type='text' size=100></input>"
         document.getElementById("gittoken").addEventListener("change", async (e)=>{
             window._GIT_TOKEN=e.target.value;
             window.localStorage.setItem("GIT_TOKEN", e.target.value);
-            document.getElementById("main").innerHTML="";
+            document.getElementById("main").innerHTML="bussy..";
             window._loadApp();
         });
         return;
