@@ -1,7 +1,4 @@
-console.log("serviceWorker 0");
-const urlsToCache = [
-    "music.html", "load/loader.js"];
-console.log("serviceWorker 1");
+const urlsToCache = ["music.html", "load/loader.js", "manifest.json", "serviceWorker.js"];
 self.addEventListener("install", async (event) => {
    console.log("Service worker installed");
    //event.waitUntil(async () => {
@@ -11,19 +8,18 @@ self.addEventListener("install", async (event) => {
       cache.addAll(urlsToCache);
    //});
 });
-console.log("serviceWorker 2");
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", async (event) => {
     console.log("Service worker fetch event");
-    if (event.request.url.indexOf("/music.html")>=0 || event.request.url.indexOf("/load/loader.js")>=0) {
-        event.respondWith(caches.match(event.request));
-    } else {
-        //console.log("Service worker fetch from server");
-        event.respondWith(
-            fetch(event.request).catch(error => {
-                console.log("Service worker fetch from server error: ", error);
-            })
-        )
+    for (let url of urlsToCache) {
+        if (event.request.url.indexOf(url)>=0) {
+            console.log("Service worker fetch from cache", event.request.url);
+            event.respondWith(caches.match(event.request));
+            return;
+        }
     }
+    event.respondWith(
+        fetch(event.request).catch(error => {
+            console.log("Service worker fetch from server error: ", error);
+        })
+    )
 });
-console.log("serviceWorker 3");
-

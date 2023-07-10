@@ -1,10 +1,12 @@
 var _clientID = "b_"+(new Date()).getTime()+""+Math.random();
 let _fetch=fetch;
 
+window._noCaching = false;
 window._isPWA = window.location.href.startsWith("https:");
-//window._isPWA = true;
 
-if (!window._isPWA) {
+//window._isPWA = false; window._noCaching = true; window._noServiceWorker = false;
+
+if (!window._isPWA || window._noCaching) {
     window.fetch = async (url, params, isgit)=> {
         let resp = await _fetch("/api/fetch?"+encodeURIComponent(JSON.stringify({clientID:_clientID, url:url, params:params, isgit:isgit})));
         return resp;
@@ -12,7 +14,7 @@ if (!window._isPWA) {
 }
 
 (async function () {
-    if ('serviceWorker' in navigator) {
+    if (!_noServiceWorker && window._isPWA && 'serviceWorker' in navigator) {
         navigator.serviceWorker.register('serviceWorker.js')
         .then(function(registration) {
             console.log('ServiceWorker registration successful with scope: ', registration.scope);
@@ -22,11 +24,11 @@ if (!window._isPWA) {
     }
 
     let GIT_URL="https://api.github.com/repos/thomastschurtschenthaler/wmovies/contents/";
-    let local = (!window._isPWA) && true;
+    let local =  !window._isPWA || _noCaching;
     
     async function loadAndCacheResource(respath, noCache) {
         try {
-            let useCache = (window._isPWA || false) && (!noCache);
+            let useCache = window._isPWA && (!noCache) && (!_noCaching);
 
             let cacheid = "res_"+respath;
             let fromCache = window.localStorage.getItem(cacheid);
@@ -35,9 +37,9 @@ if (!window._isPWA) {
                 let respbuffer = Uint8Array.from(atob(fromCache), c => c.charCodeAt(0));
                 return respbuffer;
             }
-            let url =  GIT_URL+respath+"?token="+((new Date()).getTime()+"");
+            let url =  GIT_URL+respath+(local?"":"?token="+((new Date()).getTime()+""));
             let resp = null;
-            if (window._isPWA) {
+            if (window._isPWA && !window._noCaching) {
                 let gheaders={
                     'Authorization': 'token ' + window._GIT_TOKEN
                 };
@@ -63,8 +65,10 @@ if (!window._isPWA) {
             return respbuffer;
         } catch (e) {
             console.log("loadAndCacheResource error", e+"; "+respath);
-            window.localStorage.setItem("showgittokeninput", "true");
-            window.location.reload();
+            if (window._isPWA && (!window._noCaching)) {
+                window.localStorage.setItem("showgittokeninput", "true");
+                window.location.reload();
+            }
         }
     }
 
@@ -105,7 +109,7 @@ if (!window._isPWA) {
     }
 
     window._GIT_TOKEN = window.localStorage.getItem("GIT_TOKEN");
-    if (window._isPWA && ((window._GIT_TOKEN==null && window.localStorage.getItem("cached")==null) || window.localStorage.getItem("showgittokeninput")!=null)) {
+    if (window._isPWA && (!window._noCaching) && ((window._GIT_TOKEN==null && window.localStorage.getItem("cached")==null) || window.localStorage.getItem("showgittokeninput")!=null)) {
         window.localStorage.removeItem("showgittokeninput");
         document.getElementById("main").innerHTML="GIT Token: <input id='gittoken' type='text' size=100></input>"
         document.getElementById("gittoken").addEventListener("change", async (e)=>{
@@ -117,13 +121,28 @@ if (!window._isPWA) {
         return;
     }
 
-    window._loadApp();
+    try {
+        await window._loadApp();
+    } catch (e) {
+        document.getElementById("main").innerHTML=`
+            <div>Error: ${e}</div>
+            <div><button id="reloadbtn">Reload</button></div>
+            `;
+        document.getElementById("reloadbtn").addEventListener("click", (ev)=>{
+            window.reloadApp();
+        });
+    }
 })();
 
 async function musicPlayerLoadPlaylist() {
     try {
-        let rplaylist = await _fetch("/api/musicPlayerLoadPlaylist");
-        let splaylist = await rplaylist.text();
+        let splaylist = null;
+        if (window._isPWA) {
+            splaylist = localStorage.getItem("playlists");
+        } else {
+            let rplaylist = await _fetch("/api/musicPlayerLoadPlaylist");
+            splaylist = await rplaylist.text();
+        }
         if (splaylist==null || splaylist.length==0) return null;
         let playlist = JSON.parse(splaylist);
         return playlist;
@@ -133,6 +152,10 @@ async function musicPlayerLoadPlaylist() {
     }
 }
 async function musicPlayerSavePlaylist(playlist) {
-    _fetch("/api/musicPlayerSavePlaylist", {method:"POST", body:JSON.stringify(playlist)});
+    if (window._isPWA) {
+        localStorage.setItem("playlists", JSON.stringify(playlist));
+    } else {
+        _fetch("/api/musicPlayerSavePlaylist", {method:"POST", body:JSON.stringify(playlist)});
+    }
 }
 
