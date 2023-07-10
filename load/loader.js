@@ -1,9 +1,10 @@
 var _clientID = "b_"+(new Date()).getTime()+""+Math.random();
 let _fetch=fetch;
 
-window._noCaching = false;
+window._noCaching = false; window._noServiceWorker = false;
 window._isPWA = window.location.href.startsWith("https:");
 
+//https://raw.githack.com/thomastschurtschenthaler/music/t6/music.html
 //window._isPWA = false; window._noCaching = true; window._noServiceWorker = false;
 
 if (!window._isPWA || window._noCaching) {
