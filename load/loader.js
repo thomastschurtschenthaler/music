@@ -5,7 +5,7 @@ window._noCaching = false; window._noServiceWorker = false;
 window._isPWA = window.location.href.startsWith("https:");
 
 //https://raw.githack.com/thomastschurtschenthaler/music/t6/music.html
-//window._isPWA = false; window._noCaching = true; window._noServiceWorker = false;
+//window._isPWA = true; window._noCaching = true; window._noServiceWorker = true;
 
 if (!window._isPWA || window._noCaching) {
     window.fetch = async (url, params, isgit)=> {
@@ -85,20 +85,15 @@ if (!window._isPWA || window._noCaching) {
     }
 
     window._loadApp = async function(reload) {
-        let noCache = reload;
-        window.loadedStyles = {
-            "bootstrap": await loadAndCacheResource("/lib/bootstrap.min.css", noCache),
-            "common": await loadAndCacheResource("/music/comp/common.css", noCache),
-            "materialcss": await loadAndCacheResource("/music/comp/font/material.css2", noCache),
-            "materialfont": await loadAndCacheResource("/music/comp/font/material.woff2", noCache)
+        await loadScript("assets.js", reload);
+        window.loadedStyles = {};
+        for (let asset in window.assets.css) {
+            window.loadedStyles[asset] = await loadAndCacheResource(window.assets.css[asset], reload);
         }
-        await loadScript("comp/common.js", reload);
-        await loadScript("comp/player.js", reload);
-        await loadScript("comp/search.js", reload);
-        await loadScript("comp/playlist.js", reload);
-        await loadScript("comp/playlists.js", reload);
-        await loadScript("comp/main.js", reload);
-        await loadScript("app.js", reload);
+        for (let asset in window.assets.js) {
+            await loadScript(window.assets.js[asset], reload);
+        }
+
         window.localStorage.setItem("cached", "true");
         if (!reload) {
             window.app.init();
