@@ -9,8 +9,8 @@
         "type": "image/png"
       }
     ],
-    "start_url": "/thomastschurtschenthaler/music/t7/music.html",
+    "start_url": "/thomastschurtschenthaler/music/t8/music.html",
     "display": "fullscreen",
-    "theme_color": "#eeeeee",
-    "background_color": "#eeeeee"
+    "theme_color": "#333333",
+    "background_color": "#333333"
   }
