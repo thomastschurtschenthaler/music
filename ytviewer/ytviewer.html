@@ -20,21 +20,34 @@
             (async function init() {
                 let ytdlbrowser = await(await fetch("ytdlbrowser.js")).text();
                 let ytviewer = await(await fetch("ytviewer.js")).text();
-                let base64js = btoa(encodeURI(ytdlbrowser+ytviewer));
-                let boookmarklet = "javascript:(function(){let script=document.createElement('SCRIPT');script.type='text/javascript';script.appendChild(document.createTextNode(decodeURI(atob('"+base64js+"'))));document.getElementsByTagName('head')[0].appendChild(script);})();";
-                console.log("length", boookmarklet.length);
-                document.getElementById("bmlink").setAttribute("href", boookmarklet);
-                document.getElementById("bmtxt").value=boookmarklet;
-                document.getElementById("bmcopy").addEventListener("click", async (e)=>{
-                    e.preventDefault();
-                    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-                        iosCopyToClipboard(document.getElementById("bmtxt"));
-                    } else {
-                        document.body.focus();
-                        await navigator.clipboard.writeText(boookmarklet);
-                    }
-                    document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success m-1 p-1'>bookmarklet code copied on clipboard</div>";
-                });
+                let zipped  = await new Response((new ReadableStream({
+                    start(controller) {
+                        controller.enqueue((new TextEncoder()).encode(ytdlbrowser+ytviewer).buffer);
+                        controller.close();}
+                })).pipeThrough(new CompressionStream("gzip"))).blob();
+                
+                let reader = new FileReader();
+                reader.readAsDataURL(zipped); 
+                reader.onloadend = async function () {
+                    let base64js = reader.result;
+                    let decodeZip = "let decodeZip = async function(base64js) {";
+                    decodeZip+="let decompblob = await new Response((await (await fetch(base64js)).blob()).stream().pipeThrough(new DecompressionStream('gzip'))).blob();";
+                    decodeZip+="return (new TextDecoder()).decode(await decompblob.arrayBuffer());};";
+                    let boookmarklet = "javascript:(async function(){"+decodeZip+"let script=document.createElement('SCRIPT');script.type='text/javascript';let decodedjs = await decodeZip('"+base64js+"'); script.appendChild(document.createTextNode(decodedjs));document.getElementsByTagName('head')[0].appendChild(script);})();";
+                    console.log("length", boookmarklet.length);
+                    document.getElementById("bmlink").setAttribute("href", boookmarklet);
+                    document.getElementById("bmtxt").value=boookmarklet;
+                    document.getElementById("bmcopy").addEventListener("click", async (e)=>{
+                        e.preventDefault();
+                        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                            iosCopyToClipboard(document.getElementById("bmtxt"));
+                        } else {
+                            document.body.focus();
+                            await navigator.clipboard.writeText(boookmarklet);
+                        }
+                        document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success m-1 p-1'>bookmarklet code copied on clipboard</div>";
+                    });
+                }; 
             })();
         </script>
         <h1>YTViewer - A youtube.com Viewer Bookmarklet</h1>
