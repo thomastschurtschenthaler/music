@@ -14,27 +14,14 @@
                 var s = window.getSelection();
                 s.removeAllRanges();
                 s.addRange(range);
-                el.setSelectionRange(0, 999999);
+                el.setSelectionRange(0, el.value.length);
                 document.execCommand('copy');
             }
             (async function init() {
-                let ytdlbrowser = await(await fetch("ytdlbrowser.js")).text();
-                let ytviewer = await(await fetch("ytviewer.js")).text();
-                let zipped  = await new Response((new ReadableStream({
-                    start(controller) {
-                        controller.enqueue((new TextEncoder()).encode(ytdlbrowser+ytviewer).buffer);
-                        controller.close();}
-                })).pipeThrough(new CompressionStream("gzip"))).blob();
-                
-                let reader = new FileReader();
-                reader.readAsDataURL(zipped); 
-                reader.onloadend = async function () {
-                    let base64js = reader.result;
-                    let decodeZip = "let decodeZip = async function(base64js) {";
-                    decodeZip+="let decompblob = await new Response((await (await fetch(base64js)).blob()).stream().pipeThrough(new DecompressionStream('gzip'))).blob();";
-                    decodeZip+="return (new TextDecoder()).decode(await decompblob.arrayBuffer());};";
-                    let boookmarklet = "javascript:(async function(){"+decodeZip+"let script=document.createElement('SCRIPT');script.type='text/javascript';let decodedjs = await decodeZip('"+base64js+"'); script.appendChild(document.createTextNode(decodedjs));document.getElementsByTagName('head')[0].appendChild(script);})();";
-                    console.log("length", boookmarklet.length);
+                let baseurl = window.location.href.substring(0, window.location.href.lastIndexOf("/")+1);
+                baseurl=baseurl.replace("raw.githack.com", "raw.githubusercontent.com");
+                let boookmarklet = "javascript:(async function(){ytdlbrowser = await(await fetch('"+baseurl+"ytdlbrowser.js')).text(); let ytviewer = await(await fetch('"+baseurl+"ytviewer.js')).text(); eval(ytdlbrowser+ytviewer);})();";
+                setTimeout(()=>{
                     document.getElementById("bmlink").setAttribute("href", boookmarklet);
                     document.getElementById("bmtxt").value=boookmarklet;
                     document.getElementById("bmcopy").addEventListener("click", async (e)=>{
@@ -47,12 +34,13 @@
                         }
                         document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success m-1 p-1'>bookmarklet code copied on clipboard</div>";
                     });
-                }; 
+                },1);
             })();
         </script>
         <h1>YTViewer - A youtube.com Viewer Bookmarklet</h1>
         <p>
-            Author: Thomas Tschurtschenthaler
+            Author: Thomas Tschurtschenthaler<br>
+            GitHub: <a href="https://github.com/thomastschurtschenthaler/ytviewer" target="_blank">YTViewer</a>
         </p>
         <p>
             Drag the bookmarklet <a class="btn btn-secondary m-1 p-1" id="bmlink">YTViewer</a> link to the bookmarks bar in your browser to add YTViewer.<br>
@@ -65,11 +53,11 @@
         </p>
         <p>
             Once activated YTViewer looks like this:
-            <div><img src="screen1.png" width="500rem" title="activated YTViewer"></img></div>
+            <div><img src="screen1.png" width="60%" title="activated YTViewer"></img></div>
         </p>
         <p>
-            Now any youtube thumbnail - except of shorts - opens in YTViewer.
-            <div><img src="screen2.png" width="500rem" title="playing YTViewer"></img></div>
+            Now any youtube thumbnail - except of shorts - opens in YTViewer:
+            <div><img src="screen2.png" width="60%" title="playing YTViewer"></img></div>
         </p>
         <input style="position: absolute; left:0px; top:-100px;" id="bmtxt"></input>
     </body>
