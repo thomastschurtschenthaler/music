@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <title>YTViewer Bookmarklet</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>YTViewer Bookmarklet</title>
+        <link rel="stylesheet" href="bootstrap.min.css">
+    </head>
+    <body tabindex="0">
+        <script>
+            function iosCopyToClipboard(el) {
+                range = document.createRange();
+                range.selectNodeContents(el);
+                var s = window.getSelection();
+                s.removeAllRanges();
+                s.addRange(range);
+                el.setSelectionRange(0, el.value.length);
+                document.execCommand('copy');
+            }
+            (async function init() {
+                let baseurl = window.location.href.substring(0, window.location.href.lastIndexOf("/")+1);
+                let boookmarklet = "javascript:(async function(){ytdlbrowser = await(await fetch('"+baseurl+"ytdlbrowser.js')).text(); let ytviewer = await(await fetch('"+baseurl+"ytviewer.js')).text(); eval(ytdlbrowser+ytviewer);})();";
+                setTimeout(()=>{
+                    document.getElementById("bmlink").setAttribute("href", boookmarklet);
+                },1);    
+                
+                /*let ytdlbrowser = await(await fetch("ytdlbrowser.js")).text();
+                let ytviewer = await(await fetch("ytviewer.js")).text();
+                let zipped  = await new Response((new ReadableStream({
+                    start(controller) {
+                        controller.enqueue((new TextEncoder()).encode(ytdlbrowser+ytviewer).buffer);
+                        controller.close();}
+                })).pipeThrough(new CompressionStream("gzip"))).blob();
+                
+                let reader = new FileReader();
+                reader.readAsDataURL(zipped); 
+                reader.onloadend = async function () {
+                    let base64js = reader.result;
+                    let decodeZip = "let decodeZip = async function(base64js) {";
+                    decodeZip+="let decompblob = await new Response((await (await fetch(base64js)).blob()).stream().pipeThrough(new DecompressionStream('gzip'))).blob();";
+                    decodeZip+="return (new TextDecoder()).decode(await decompblob.arrayBuffer());}";
+                    let boookmarklet = "javascript:(async function(){"+decodeZip+"; let decodedjs = await decodeZip('"+base64js+"'); eval(decodedjs);})();";
+                    console.log("length", boookmarklet.length);
+                    document.getElementById("bmlink").setAttribute("href", boookmarklet);
+                    document.getElementById("bmtxt").value=boookmarklet;
+                    document.getElementById("bmcopy").addEventListener("click", async (e)=>{
+                        e.preventDefault();
+                        if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+                            iosCopyToClipboard(document.getElementById("bmtxt"));
+                        } else {
+                            document.body.focus();
+                            await navigator.clipboard.writeText(boookmarklet);
+                        }
+                        document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success m-1 p-1'>bookmarklet code copied on clipboard</div>";
+                    });
+                };*/
+            })();
+        </script>
+        <h1>YTViewer - A youtube.com Viewer Bookmarklet</h1>
+        <p>
+            Author: Thomas Tschurtschenthaler
+        </p>
+        <p>
+            Drag the bookmarklet <a class="btn btn-secondary m-1 p-1" id="bmlink">YTViewer</a> link to the bookmarks bar in your browser to add YTViewer.<br>
+            Activate the YTViewer by clicking in the Bookmarklet Link on <a href="https://www.youtube.com" target="_blank">www.youtube.com</a> or <a href="https://m.youtube.com" target="_blank">m.youtube.com</a>.
+        </p>
+        <p>
+            Easiest way to add YTViewer on iOS devices is to add it to your desktop safari and synchronize bookmarks via iCloud.<br>
+            Alternatively you may add this page as bookmark to your iOS device and then edit the bookmark link destination replacing the link with the YTViewer javascript.<br>
+            Yust copy the code to the clipboard <span id="bmcopydiv"><button class="btn btn-primary m-1 p-1" id="bmcopy">copy bookmarklet</button></span> and paste it. 
+        </p>
+        <p>
+            Once activated YTViewer looks like this:
+            <div><img src="screen1.png" width="500rem" title="activated YTViewer"></img></div>
+        </p>
+        <p>
+            Now any youtube thumbnail - except of shorts - opens in YTViewer.
+            <div><img src="screen2.png" width="500rem" title="playing YTViewer"></img></div>
+        </p>
+        <input style="position: absolute; left:0px; top:-100px;" id="bmtxt"></input>
+    </body>
+</html>
+
