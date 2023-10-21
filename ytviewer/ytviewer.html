@@ -5,6 +5,15 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>YTViewer Bookmarklet</title>
         <link rel="stylesheet" href="bootstrap.min.css">
+        <style>
+            p {
+                margin:1rem;
+                line-height: 1.8rem;
+            }
+            h1 {
+                margin:1rem;
+            }
+        </style>
     </head>
     <body tabindex="0">
         <script>
@@ -32,32 +41,36 @@
                             document.body.focus();
                             await navigator.clipboard.writeText(boookmarklet);
                         }
-                        document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success m-1 p-1'>bookmarklet code copied on clipboard</div>";
+                        document.getElementById("bmcopydiv").innerHTML="<div class='btn btn-success p-1'>bookmarklet code copied on clipboard</div>";
                     });
                 },1);
             })();
         </script>
-        <h1>YTViewer - A youtube.com Viewer Bookmarklet</h1>
+        <h1>YTViewer - A youtube.com Viewer and Download Bookmarklet</h1>
         <p>
             Author: Thomas Tschurtschenthaler<br>
             GitHub: <a href="https://github.com/thomastschurtschenthaler/ytviewer" target="_blank">YTViewer</a>
         </p>
         <p>
-            Drag the bookmarklet <a class="btn btn-secondary m-1 p-1" id="bmlink">YTViewer</a> link to the bookmarks bar in your browser to add YTViewer.<br>
-            Activate the YTViewer by clicking in the Bookmarklet Link on <a href="https://www.youtube.com" target="_blank">www.youtube.com</a> or <a href="https://m.youtube.com" target="_blank">m.youtube.com</a>.
+            Drag the bookmarklet <a class="btn btn-secondary p-1" id="bmlink">YTViewer</a> link to the bookmarks bar in your browser to add YTViewer.<br>
+            Activate YTViewer by clicking in the Bookmarklet Link on <a href="https://www.youtube.com" target="_blank">www.youtube.com</a> or <a href="https://m.youtube.com" target="_blank">m.youtube.com</a>.
         </p>
         <p>
             Easiest way to add YTViewer on iOS devices is to add it to your desktop safari and synchronize bookmarks via iCloud.<br>
-            Alternatively you may add this page as bookmark to your iOS device and then edit the bookmark link destination replacing the link with the YTViewer javascript.<br>
-            Yust copy the code to the clipboard <span id="bmcopydiv"><button class="btn btn-primary m-1 p-1" id="bmcopy">copy bookmarklet</button></span> and paste it. 
+            Alternatively you may add this page as a bookmark to your iOS device and then edit the bookmark link destination replacing it with the YTViewer javascript.<br>
+            Yust copy the code to the clipboard <span id="bmcopydiv"><button class="btn btn-primary p-1" id="bmcopy">copy bookmarklet</button></span> and paste it. 
         </p>
         <p>
-            Once activated YTViewer looks like this:
-            <div><img src="screen1.png" width="60%" title="activated YTViewer"></img></div>
+            Once activated YTViewer looks like this:<br>
+            <img src="screen1.png" width="60%" title="activated YTViewer"></img>
         </p>
         <p>
-            Now any youtube thumbnail - except of shorts - opens in YTViewer:
-            <div><img src="screen2.png" width="60%" title="playing YTViewer"></img></div>
+            Now any youtube thumbnail - except of shorts - opens in YTViewer.
+        </p>
+        <p>
+            A click on the "Download" button reveals download links (Video and Audio, only Video, only Audio).<br>
+            Right clicking - or long touch on mobile - on a link opens the context menu and you can save the video/audio on your device.<br>
+            <img src="screen2.png" width="60%" title="playing YTViewer"></img>
         </p>
         <input style="position: absolute; left:0px; top:-100px;" id="bmtxt"></input>
     </body>
