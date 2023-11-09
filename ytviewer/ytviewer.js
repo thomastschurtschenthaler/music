@@ -307,8 +307,8 @@
                     let audiovideos = ytinfo.formats.filter((f)=>{return (f.hasAudio && f.hasVideo)});
                     let audiovideo = audiovideos.length>0?audiovideos[0]:null;
                     let vqualities = [];
-                    let video = ytinfo.formats.filter((f)=>{return ((!window.MediaSource || !f.isHLS) && f.hasVideo && (window.MediaSource || f.hasAudio));})
-                        .filter((v)=>{console.log("yyy", v, vqualities, v.qualityLabel, vqualities.indexOf(v.qualityLabel)); if (vqualities.indexOf(v.qualityLabel)<0 && (audiovideo==null || v==audiovideo || v.qualityLabel!=audiovideo.qualityLabel)){console.log("aaa", v); vqualities.push(v.qualityLabel); return true;}; return false});
+                    let video = ytinfo.formats.filter((f)=>{return ((!window.MediaSource || !f.isHLS || f==audiovideo) && f.hasVideo && (window.MediaSource || f.hasAudio));})
+                        .filter((v)=>{if (vqualities.indexOf(v.qualityLabel)<0 && (audiovideo==null || v==audiovideo || v.qualityLabel!=audiovideo.qualityLabel)){console.log("aaa", v); vqualities.push(v.qualityLabel); return true;}; return false});
                     videoinfos={"ytinfo":ytinfo, 
                                 "formats":ytinfo.formats.filter((f)=>{return (!f.isHLS || true);}),
                                 "audio":audio.length>0?audio[0]:null,
