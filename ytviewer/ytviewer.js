@@ -345,6 +345,14 @@
                 video.style.marginLeft="10%";
                 video.style.marginTop="5%";
                 player.appendChild(video);
+                video.addEventListener("keydown", (e)=>{
+                    e.stopPropagation();
+                    if (e.key=="Escape") {
+                        closeVideo();
+                    } else if (e.key==" ") {
+                        console.log("pause/unpause");
+                    }
+                });
                 video.focus();
                 ytplayer = new YTMSEPlayer(video);
                 ytplayer.play(videoinfos);
