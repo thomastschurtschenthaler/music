@@ -299,8 +299,20 @@
                         player.innerHTML="Error:"+e;
                         return;
                     }
+                    let getQuality = (qualityLabel)=>{
+                        let r = "";
+                        if (qualityLabel==null) qualityLabel="144p";
+                        for (let i=0; i<qualityLabel.length; i++) {
+                            let d = qualityLabel.substring(i, i+1);
+                            if (d>="0" && d<="9") {
+                                r+=d;
+                            } else {
+                                return r*1;
+                            }
+                        }
+                    }
                     let qualitiessort = (f1, f2)=>{
-                        return f2.bitrate-f1.bitrate;
+                        return getQuality(f2.qualityLabel)-getQuality(f1.qualityLabel);
                     };
                     ytinfo.formats=ytinfo.formats.sort(qualitiessort);
                     console.log("formats", ytinfo.formats);
