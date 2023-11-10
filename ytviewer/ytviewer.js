@@ -95,7 +95,7 @@
                         let furl = url+"&range="+f+"-"+(t-1);
                         let retry = (err)=>{
                             console.log("retry fetch", furl, err);
-                            setTimeout(doFetch, 1000);
+                            if (!stopped) setTimeout(doFetch, 1000);
                         }
                         let doFetch = ()=> {
                             fetch(furl).then((r)=>{
@@ -144,14 +144,14 @@
     }
     let videoSb = null; let audioSb = null; let timeUpdate=null;
     function play(videoinfos, startTime) {
-        if (videoinfos.video[videoinfos.quality].hasAudio) {
+        if (videoinfos.video[videoinfos.quality].hasAudio || videoinfos.video[videoinfos.quality].isHLS) {
             console.log("audio and video");
             playNoMSE(this, videoinfos, startTime, videoinfos.video[videoinfos.quality]);
             return;
         }
         if (!window.MediaSource) {
             console.log("MediaSource not supported");
-            playNoMSE(this, videoinfos, startTime);
+            playNoMSE(this, videoinfos, startTime, videoinfos.video[videoinfos.quality]);
             return;
         }
         
@@ -303,14 +303,15 @@
                         return f2.bitrate-f1.bitrate;
                     };
                     ytinfo.formats=ytinfo.formats.sort(qualitiessort);
+                    console.log("formats", formats);
                     let audio = ytinfo.formats.filter((f)=>{return (!f.isHLS && f.hasAudio && !f.hasVideo);});
                     let audiovideos = ytinfo.formats.filter((f)=>{return (f.hasAudio && f.hasVideo)});
                     let audiovideo = audiovideos.length>0?audiovideos[0]:null;
                     let vqualities = [];
-                    let video = ytinfo.formats.filter((f)=>{return ((!window.MediaSource || !f.isHLS || f==audiovideo) && f.hasVideo && (window.MediaSource || f.hasAudio));})
-                        .filter((v)=>{if (vqualities.indexOf(v.qualityLabel)<0 && (audiovideo==null || v==audiovideo || v.qualityLabel!=audiovideo.qualityLabel)){console.log("aaa", v); vqualities.push(v.qualityLabel); return true;}; return false});
+                    let video = ytinfo.formats.filter((f)=>{return (f.hasVideo && (window.MediaSource || f.hasAudio));})
+                        .filter((v)=>{if (vqualities.indexOf(v.qualityLabel)<0 && (audiovideo==null || v==audiovideo || v.qualityLabel!=audiovideo.qualityLabel)){vqualities.push(v.qualityLabel); return true;}; return false});
                     videoinfos={"ytinfo":ytinfo, 
-                                "formats":ytinfo.formats.filter((f)=>{return (!f.isHLS || true);}),
+                                "formats":ytinfo.formats.filter((f)=>{return (!f.isHLS);}),
                                 "audio":audio.length>0?audio[0]:null,
                                 "video":video,
                                 "quality":0,
