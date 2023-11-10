@@ -303,7 +303,7 @@
                         return f2.bitrate-f1.bitrate;
                     };
                     ytinfo.formats=ytinfo.formats.sort(qualitiessort);
-                    console.log("formats", formats);
+                    console.log("formats", ytinfo.formats);
                     let audio = ytinfo.formats.filter((f)=>{return (!f.isHLS && f.hasAudio && !f.hasVideo);});
                     let audiovideos = ytinfo.formats.filter((f)=>{return (f.hasAudio && f.hasVideo)});
                     let audiovideo = audiovideos.length>0?audiovideos[0]:null;
