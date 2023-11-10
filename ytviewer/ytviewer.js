@@ -348,11 +348,17 @@
                 video.addEventListener("keydown", (e)=>{
                     e.stopPropagation();
                     if (e.key=="Escape") {
+                        e.preventDefault();
                         closeVideo();
                     } else if (e.key==" ") {
-                        console.log("pause/unpause");
+                        e.preventDefault();
+                        if (video.paused) {
+                            video.play();
+                        } else {
+                            video.pause();
+                        }
                     }
-                });
+                }, true);
                 video.focus();
                 ytplayer = new YTMSEPlayer(video);
                 ytplayer.play(videoinfos);
