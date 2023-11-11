@@ -16,16 +16,12 @@
     function startSourceBuffer(sbCB, mediaSource, url, mimeType, contentLength, chunkSize, chunkCnt, startTime) {
         try {
             let sourceBuffer = mediaSource.addSourceBuffer(mimeType);
-            let updateendCb={finished:true, bussy:false}; let triggerTimeout=null; let stopped=false;
+            let updateendCb={finished:true, bussy:false}; let stopped=false;
             let loaded = {from:null, to:null, chunkSize:chunkSize, chunkCnt:chunkCnt, remStart:false, remEnd:false};
             sourceBuffer.addEventListener('updateend', function(e) {
                 //console.log("updateend");
                 if (stopped) return;
                 try {
-                    if (triggerTimeout!=null) {
-                        clearTimeout(triggerTimeout);
-                        triggerTimeout=null;
-                    }
                     if (!updateendCb.finished) {
                         updateendCb.cb();
                     } else {
@@ -106,7 +102,13 @@
                                     } catch (e) {
                                         console.log("appendBuffer error", e);
                                     }
-                                }).catch(retry);
+                                }).catch((err)=>{
+                                    console.log("error reading response - redirect?", err, r.url);
+                                    if (r.url!=null) {
+                                        furl=r.url;
+                                    }
+                                    retry(err);
+                                });
                             }).catch(retry);
                         }
                         doFetch();
