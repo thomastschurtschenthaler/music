@@ -331,7 +331,7 @@
                 }
                 if (videoinfos==null) {
                     let retrycnt=0;
-                    let retry = async (err) => {
+                    let retry = async (resolve, err) => {
                         retrycnt++;
                         console.log("probe fetch error", err, retrycnt);
                         if (retrycnt>=5) {
@@ -340,6 +340,7 @@
                         } else {
                             console.log("probe fetch retry #"+retrycnt);
                             videoinfos = await getAndProbeVideoInfos();
+                            resolve(videoinfos);
                         }
                     };
                     let getAndProbeVideoInfos = async () => {
@@ -351,8 +352,8 @@
                                     fetch(videoinfos.audio.url+"&range=0-1000").then((r)=>{r.arrayBuffer().then((b)=>{
                                         console.log("audio probe success");
                                         resolve(videoinfos);
-                                    }).catch(retry);}).catch(retry);
-                                }).catch(retry);}).catch(retry);
+                                    }).catch(retry);}).catch((e)=>{retry(resolve, e);});
+                                }).catch(retry);}).catch((e)=>{retry(resolve, e);});
                             
                             });
                         }
