@@ -14,9 +14,10 @@ window.GIT_URL="https://api.github.com/repos/thomastschurtschenthaler/mychat/con
     }    
     async function loadAndCacheResource(respath, noCache) {
         try {
+            let useCache = !noCache && !window._noCaching;
             let cacheid = "res_"+respath;
             let fromCache = window.localStorage.getItem(cacheid);
-            if (!window._noCaching && fromCache!=null) {
+            if (useCache && fromCache!=null) {
                 console.log("from cache", cacheid);
                 let respbuffer = Uint8Array.from(atob(fromCache), c => c.charCodeAt(0));
                 return respbuffer;
