@@ -1,6 +1,6 @@
 //https://raw.githack.com/thomastschurtschenthaler/music/chat/chat.html
 
-window.GIT_URL="https://api.github.com/repos/thomastschurtschenthaler/chat/contents/";
+window.GIT_URL="https://api.github.com/repos/thomastschurtschenthaler/mychat/contents/";
 //window._isLocal = true; window._noCaching=true;
 
 (async function () {
