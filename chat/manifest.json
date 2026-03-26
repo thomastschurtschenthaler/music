@@ -1,0 +1,16 @@
+{
+    "name": "MyChat",
+    "short_name": "MyChat",
+    "description": "My Chat",
+    "icons": [
+      {
+        "src": "icon.png",
+        "sizes": "144x144",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "chat.html",
+    "display": "fullscreen",
+    "theme_color": "#333333",
+    "background_color": "#333333"
+  }
