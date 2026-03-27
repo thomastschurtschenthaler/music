@@ -30,11 +30,15 @@ self.addEventListener("fetch", async (event) => {
     console.log("fetch", event);
     if (event.request.url.endsWith("chat.html")) {
         console.log("!!");
-        /*clients.get(event.clientId).then(client=>{
-            client.postMessage({
-                fetchbeat: true
-            });
-        });*/
+        clients.matchAll({
+            includeUncontrolled: true
+        }).then(allClients=>{
+            if (allClients.length>0) {
+                allClients[0].postMessage({
+                    fetchbeat: true
+                });
+            }
+        });
     }
     if (urlsToCache.filter(url=>event.request.url.endsWith(url)).length>0) {
         event.respondWith(caches.match(event.request));
