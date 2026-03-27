@@ -27,6 +27,7 @@ self.addEventListener("install", async (event) => {
     );
 });
 self.addEventListener("fetch", async (event) => {
+    console.log("fetch", event);
     if (event.request.url.endsWith("chat.html")) {
         console.log("!!");
         /*clients.get(event.clientId).then(client=>{
