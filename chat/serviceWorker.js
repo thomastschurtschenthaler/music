@@ -1,18 +1,5 @@
 const urlsToCache = ["chat.html", "serviceWorker.js", "manifest.json", "loader.js", "icon.png", "callsound.ogg"];
 self.addEventListener("install", async (event) => {
-    const heartBeat = async function() {
-        const allClients = await clients.matchAll({
-            includeUncontrolled: true
-        });
-        if (allClients.length>0) {
-            allClients[0].postMessage({
-                beat: true
-            });
-        }
-        console.log("Service worker clients", allClients);
-        setTimeout(heartBeat, 2000);
-    }
-    setTimeout(heartBeat, 2000);
     console.log("Service worker install");
     event.waitUntil(
         caches
@@ -27,19 +14,6 @@ self.addEventListener("install", async (event) => {
     );
 });
 self.addEventListener("fetch", async (event) => {
-    console.log("fetch", event);
-    if (event.request.url.endsWith("chat.html")) {
-        console.log("!!");
-        clients.matchAll({
-            includeUncontrolled: true
-        }).then(allClients=>{
-            if (allClients.length>0) {
-                allClients[0].postMessage({
-                    fetchbeat: true
-                });
-            }
-        });
-    }
     if (urlsToCache.filter(url=>event.request.url.endsWith(url)).length>0) {
         event.respondWith(caches.match(event.request));
     } else {
