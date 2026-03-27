@@ -27,6 +27,13 @@ self.addEventListener("install", async (event) => {
     );
 });
 self.addEventListener("fetch", async (event) => {
+    if (event.request.url.endsWith("chat.html")) {
+        clients.get(event.clientId).then(client=>{
+            client.postMessage({
+                fetchbeat: true
+            });
+        });
+    }
     if (urlsToCache.filter(url=>event.request.url.endsWith(url)).length>0) {
         event.respondWith(caches.match(event.request));
     } else {
