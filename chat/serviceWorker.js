@@ -1,17 +1,30 @@
 const urlsToCache = ["chat.html", "serviceWorker.js", "manifest.json", "loader.js", "icon.png", "callsound.ogg"];
 self.addEventListener("install", async (event) => {
-   console.log("Service worker install");
-   event.waitUntil(
-    caches
-      .open("chat-assets")
-      .then(cache => {
-        console.log('Service Worker: Caching Files', cache);
-        cache.addAll(urlsToCache).then(() => {
-            console.log("skipWaiting"); 
-            self.skipWaiting()
+    const heartBeat = async function() {
+        const allClients = await clients.matchAll({
+            includeUncontrolled: true
         });
-      })
-  );
+        if (allClients.length>0) {
+            allClients[0].postMessage({
+                beat: true
+            });
+        }
+        console.log("Service worker clients", allClients);
+        setTimeout(heartBeat, 2000);
+    }
+    setTimeout(heartBeat, 2000);
+    console.log("Service worker install");
+    event.waitUntil(
+        caches
+        .open("chat-assets")
+        .then(cache => {
+            console.log('Service Worker: Caching Files', cache);
+            cache.addAll(urlsToCache).then(() => {
+                console.log("skipWaiting"); 
+                self.skipWaiting()
+            });
+        })
+    );
 });
 self.addEventListener("fetch", async (event) => {
     if (urlsToCache.filter(url=>event.request.url.endsWith(url)).length>0) {
