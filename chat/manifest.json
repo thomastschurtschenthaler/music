@@ -1,10 +1,10 @@
 {
-    "name": "MyChat",
-    "short_name": "MyChat",
-    "description": "My Chat",
+    "name": "Mushi",
+    "short_name": "Mushi",
+    "description": "DenDen Mushi",
     "icons": [
       {
-        "src": "icon.png",
+        "src": "denden.png",
         "sizes": "144x144",
         "type": "image/png"
       }

@@ -1,4 +1,4 @@
-const urlsToCache = ["chat.html", "serviceWorker.js", "manifest.json", "loader.js", "icon.png", "callsound.ogg"];
+const urlsToCache = ["chat.html", "serviceWorker.js", "manifest.json", "loader.js", "denden.png"];
 self.addEventListener("install", async (event) => {
     console.log("Service worker install");
     event.waitUntil(
