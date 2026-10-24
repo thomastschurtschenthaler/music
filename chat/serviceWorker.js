@@ -24,3 +24,8 @@ self.addEventListener("fetch", async (event) => {
         );
     }
 });
+self.addEventListener("push", (event) => {
+    console.log("push notification", event);
+    console.log("push notification text", event.data.text());
+    event.waitUntil(self.registration.showNotification("New Message", { "body":event.data.text()}));
+});
