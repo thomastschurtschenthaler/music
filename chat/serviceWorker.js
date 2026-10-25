@@ -30,7 +30,7 @@ self.addEventListener("push", (event) => {
     console.log("push notification msg json", msg);
     const _self=self;
     //event.waitUntil(self.registration.showNotification(msg.from, { "body":msg.message}));
-    event.waitUntil(async function() {
+    event.waitUntil(new Promise(async function(resolve) {
         console.log("push async enter");
         if (msg.notification) {
             console.log("show notification", msg);
@@ -41,6 +41,6 @@ self.addEventListener("push", (event) => {
             await _self.registration.active.postMessage(msg);
             console.log("after post message", msg);
         }
-        return undefined;
-    });
+        return resolve(undefined);
+    }));
 });
