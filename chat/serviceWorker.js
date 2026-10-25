@@ -31,6 +31,7 @@ self.addEventListener("push", (event) => {
     const _self=self;
     //event.waitUntil(self.registration.showNotification(msg.from, { "body":msg.message}));
     event.waitUntil(async function() {
+        console.log("push async enter");
         if (msg.notification) {
             console.log("show notification", msg);
             await _self.registration.showNotification(msg.from, { "body":msg.message});
