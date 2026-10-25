@@ -28,8 +28,8 @@ self.addEventListener("push", (event) => {
     console.log("push notification", event);
     const msg = event.data.json();
     console.log("push notification msg json", msg);
-    event.waitUntil(self.registration.showNotification(msg.from, { "body":msg.message}));
-    /*event.waitUntil(async function() {
+    //event.waitUntil(self.registration.showNotification(msg.from, { "body":msg.message}));
+    event.waitUntil(async function() {
         if (msg.notification) {
             console.log("show notification", msg);
             await self.registration.showNotification(msg.from, { "body":msg.message});
@@ -39,5 +39,6 @@ self.addEventListener("push", (event) => {
             await self.registration.active.postMessage(msg);
             console.log("after post message", msg);
         }
-    });*/
+        return undefined;
+    });
 });
