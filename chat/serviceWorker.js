@@ -35,7 +35,7 @@ self.addEventListener("push", (event) => {
         }
         if (self.registration.active) {
             console.log("post message", msg);
-            await self.registration.postMessage(msg);
+            await self.registration.active.postMessage(msg);
             console.log("after post message", msg);
         }
     });
