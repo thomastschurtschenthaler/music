@@ -28,15 +28,16 @@ self.addEventListener("push", (event) => {
     console.log("push notification", event);
     const msg = event.data.json();
     console.log("push notification msg json", msg);
+    const _self=self;
     //event.waitUntil(self.registration.showNotification(msg.from, { "body":msg.message}));
     event.waitUntil(async function() {
         if (msg.notification) {
             console.log("show notification", msg);
-            await self.registration.showNotification(msg.from, { "body":msg.message});
+            await _self.registration.showNotification(msg.from, { "body":msg.message});
         }
-        if (self.registration.active) {
+        if (_self.registration.active) {
             console.log("post message", msg);
-            await self.registration.active.postMessage(msg);
+            await _self.registration.active.postMessage(msg);
             console.log("after post message", msg);
         }
         return undefined;
